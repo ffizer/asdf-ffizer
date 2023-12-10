@@ -15,5 +15,8 @@ release_file="$ASDF_DOWNLOAD_PATH/ffizer_$ASDF_INSTALL_VERSION-aarch64-unknown-l
 # Download distribution file to the download directory
 download_release "$ASDF_INSTALL_VERSION" "$release_file"
 
-# Copy distribution file into the download directory
-copy_release "$ASDF_INSTALL_VERSION" "$release_file" || fail "Could not copy $release_file"
+#  Extract contents of distribution file into the download directory
+extract_release "$ASDF_INSTALL_VERSION" "$release_file" || fail "Could not extract $release_file"
+
+# Remove the distribution file since we don't need to keep it
+rm "$release_file"

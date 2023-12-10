@@ -45,12 +45,24 @@ download_release() {
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
-copy_release() {
+extract_release() {
   local version="$1"
   local filename="$2"
 
-  mkdir -p "$ASDF_DOWNLOAD_PATH/ffizer/bin"
-  mv $filename "$ASDF_DOWNLOAD_PATH/ffizer/bin/"
+  if [[ $filename == *.zip ]]
+  then
+    local tmp_download_dir
+    tmp_download_dir=$(mktemp -d -t asdf_extract_XXXXXXX)
+
+    (
+      set -e
+
+      cd "$tmp_download_dir"
+      unzip -q "$filename" && mv "ffizer_$version-aarch64-unknown-linux-gnu"/* "$ASDF_DOWNLOAD_PATH"
+    )
+  else
+    tar -xvf $filename -C "$ASDF_DOWNLOAD_PATH" --strip-components=1
+  fi
 }
 
 install_version() {
